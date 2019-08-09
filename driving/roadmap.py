@@ -1,4 +1,4 @@
-from math import pi
+from math import pi, sin, cos
 import numpy as np
 # for later?
 # coords = {'left': (0.0, 0.5),
@@ -37,22 +37,24 @@ class StraightTile(Tile):
 class CurveTile(Tile):
   def distance_angle(self, x, y, theta):
     """Distance and angle from nearest road centerline"""
-    c2 = center2()
-    c3 = center3()
+    # this is probably more complicated than necessary. Don't stare at it too hard.
+    c2 = self.center2()
+    c3 = self.center3()
     pos = np.array((x, y))
     cpos = pos - c2
     cpos3 = np.array((x-c2[0], y-c2[1], 0.0))
-    closest = c2 + 0.5*cpos/np.norm(cpos)
-    tangent = np.cross((0., 0., c3[2]), cpos3)/np.norm(cpos3)
-    assert np.abs(np.norm(tangent) - 1.0) < 1e-5
-    dist = -np.cross(tangent[1:2], pos-closest).item()
-    ang = np.arccos(np.dot(tangent, vel)/np.norm(vel))
+    closest = c2 + 0.5*cpos/np.linalg.norm(cpos)
+    tangent = np.cross((0., 0., c3[2]), cpos3)/np.linalg.norm(cpos3)
+    assert np.abs(np.linalg.norm(tangent) - 1.0) < 1e-5
+    dist = np.cross(tangent[0:2], pos-closest).item()
+    print(np.arctan2(tangent[1], tangent[0]))
+    ang = angle_diff(theta, np.arctan2(tangent[1], tangent[0]))
     return dist, ang
 
   def center2(self):
     """2d array at the corner the road curves around."""
-    cx = 1.0 if max(self.start[1], self.end[1]) > 1-1e-5 else 0.0
-    cy = 1.0 if max(self.start[2], self.end[2]) > 1-1e-5 else 0.0
+    cx = 1.0 if max(self.start[0], self.end[0]) > 1-1e-5 else 0.0
+    cy = 1.0 if max(self.start[1], self.end[1]) > 1-1e-5 else 0.0
     return np.array((cx, cy))
 
   def center3(self):
@@ -63,13 +65,15 @@ class CurveTile(Tile):
     cz = np.cross(relstart, relend).item()
     assert cz != 0.0
     cz = 1.0 if cz > 0.0 else -1.0
-    return np.array((cx, cy, cz))
+    return np.array((center[0], center[1], cz))
 
 class RoadMap:
+  """Collection of tiles that makes a map. tiles argument is a"""
+
   def __init__(self, tiles):
     pass
-
-  def distance_angle_d(self, x, y, theta):
+    
+  def distance_angle_deg(self, x, y, theta):
     pass
 
   def tile_of(self, x, y):
