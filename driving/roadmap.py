@@ -1,10 +1,5 @@
-from math import pi, sin, cos
+from math import pi, sin, cos, floor, ceil
 import numpy as np
-# for later?
-# coords = {'left': (0.0, 0.5),
-#           'right': (1.0, 0.5),
-#           'top': (0.5, 1.0),
-#           'bottom': (0.5, 0.0)}
 
 def angle_diff(a, b):
   """Calculate the difference in angles between -pi and pi"""
@@ -68,17 +63,50 @@ class CurveTile(Tile):
     return np.array((center[0], center[1], cz))
 
 class RoadMap:
-  """Collection of tiles that makes a map. tiles argument is a"""
+  """Collection of tiles that makes a map. tiles argument is a 2d numpy array of tiles"""
 
   def __init__(self, tiles):
-    pass
+    self.tiles = tiles
     
-  def distance_angle_deg(self, x, y, theta):
-    pass
+  def distance_angle_deg(self, x, y, theta_deg):
+    tile = self.get_tile(x, y)
+    rx, ry = self.tile_relative(x, y)
+    theta_rad = theta_deg*pi/180
+    d, a = tile.distance_angle(rx, ry, theta_rad)
+    return d, a*180/pi
 
-  def tile_of(self, x, y):
-    pass
+  def distance_angle(self, x, y, theta_rad):
+    tile = self.get_tile(x, y)
+    rx, ry = self.tile_relative(x, y)
+    d, a = tile.distance_angle(rx, ry, theta_rad)
+    return d, a
+
+  def get_tile(self, x, y):
+    """Return the tile that this falls into"""
+    row = self.tiles.shape[0]-ceil(y)
+    row = np.clip(row, 0, self.tiles.shape[0]-1)
+    col = np.clip(floor(x), 0, self.tiles.shape[1]-1)
+    return self.tiles[row, col]
 
   def tile_relative(self, x, y):
-    pass
+    return x%1, y%1
 
+coords = {'left':(0.0, 0.5),
+          'right':(1.0, 0.5),
+          'top':(0.5, 1.0),
+          'bottom':(0.5, 0.0)}
+
+def make_oval():
+  l = coords['left']
+  r = coords['right']
+  t = coords['top']
+  b = coords['bottom']
+
+  rl = StraightTile(r, l)
+  rb = CurveTile(r, b)
+  tr = CurveTile(t, r)
+  lr = StraightTile(l, r)
+  lt = CurveTile(l, t)
+  bl = CurveTile(b, l)
+  return RoadMap(np.array(((rb, rl, bl),
+                           (tr, lr, lt))))

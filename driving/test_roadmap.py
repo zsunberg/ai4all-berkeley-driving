@@ -49,6 +49,31 @@ def test_right_top():
   assert d == pytest.approx(np.linalg.norm(xy - (0.5*cpos/np.linalg.norm(cpos)+c)))
   assert a == pytest.approx(angle_diff(-0.3, np.arctan2(cpos[1], cpos[0])-pi/2))
 
+def test_get_tile():
+  l = coords['left']
+  r = coords['right']
+  t = coords['top']
+  b = coords['bottom']
+  oval = make_oval()
+  bl = oval.get_tile(0.0, 0.0)
+  assert all(bl.start == t)
+  assert all(bl.end == r)
+  bl = oval.get_tile(-1.0, -1.0)
+  assert all(bl.start == t)
+  assert all(bl.end == r)
+  tl = oval.get_tile(0.1, 1.1)
+  assert all(tl.start == r)
+  assert all(tl.end == b)
+  tm = oval.get_tile(1.1, 1.1)
+  assert all(tm.start == r)
+  assert all(tm.end == l)
+
+def test_global_distance_angle():
+  oval = make_oval()
+  d, ar = oval.distance_angle(1.1, 0.7, 0.1)
+  assert d == pytest.approx(0.2)
+  assert ar == pytest.approx(0.1)
+
 # if __name__ == "__main__":
 #   test_straight_horiz()
 #   test_straight_down()
