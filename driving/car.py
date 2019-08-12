@@ -4,7 +4,7 @@ from math import pi, cos, sin
 class DubinsCarModel:
   """State: [x, y, theta_rad]"""
 
-  def __init__(self, speed=0.3, max_turn_rate=15*pi/180):
+  def __init__(self, speed=0.3, max_turn_rate=90*pi/180):
     self.speed = speed
     self.max_turn_rate = max_turn_rate
 
@@ -13,6 +13,10 @@ class DubinsCarModel:
     tr = np.clip(a, -self.max_turn_rate, self.max_turn_rate)
     x, y, theta = s
     thetap = theta + tr*dt
+    while thetap > 2*pi:
+        thetap -= 2*pi
+    while thetap < 0.0:
+        thetap += 2*pi
     eps = 1e-5
     if abs(tr) <= eps:
       xp = x + self.speed*cos(theta)*dt

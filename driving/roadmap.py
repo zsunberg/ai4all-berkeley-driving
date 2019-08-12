@@ -1,5 +1,6 @@
 from math import pi, sin, cos, floor, ceil
 import numpy as np
+from random import random
 
 def angle_diff(a, b):
   """Calculate the difference in angles between -pi and pi"""
@@ -38,11 +39,15 @@ class CurveTile(Tile):
     pos = np.array((x, y))
     cpos = pos - c2
     cpos3 = np.array((x-c2[0], y-c2[1], 0.0))
-    closest = c2 + 0.5*cpos/np.linalg.norm(cpos)
-    tangent = np.cross((0., 0., c3[2]), cpos3)/np.linalg.norm(cpos3)
+    if np.linalg.norm(cpos) <= 1e-6:
+      closest = self.start
+    else:
+      closest = c2 + 0.5*cpos/np.linalg.norm(cpos)
+    # tangent = np.cross((0., 0., c3[2]), cpos3)/np.linalg.norm(cpos3)
+    closest3 = np.array((closest[0], closest[1], 0.0))
+    tangent = np.cross((0., 0., c3[2]), closest3-c3)/0.5
     assert np.abs(np.linalg.norm(tangent) - 1.0) < 1e-5
     dist = np.cross(tangent[0:2], pos-closest).item()
-    print(np.arctan2(tangent[1], tangent[0]))
     ang = angle_diff(theta, np.arctan2(tangent[1], tangent[0]))
     return dist, ang
 
@@ -89,7 +94,18 @@ class RoadMap:
     return self.tiles[row, col]
 
   def tile_relative(self, x, y):
-    return x%1, y%1
+    if x >= self.tiles.shape[1]:
+      x = x - (self.tiles.shape[1] - 1)
+    elif x > 0: # within the tiles
+      x = x%1
+    if y >= self.tiles.shape[0]:
+      y = y - (self.tiles.shape[0] - 1)
+    elif y > 0: # within the tiles
+      y = y%1
+    return x, y
+
+  def sample(self):
+    return random()*self.tiles.shape[0], random()*self.tiles.shape[1]
 
 coords = {'left':(0.0, 0.5),
           'right':(1.0, 0.5),

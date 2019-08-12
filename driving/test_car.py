@@ -1,4 +1,4 @@
-from car import *
+from driving.car import *
 import numpy as np
 import pytest
 
@@ -12,7 +12,6 @@ def test_car():
   s = (0.0, 0.5, 0.0)
   dt = pi/4
   sp = car.dynamics(s, -(pi/2)/dt, dt)
-  print('sp', sp)
   assert sp[0] == pytest.approx(0.5)
   assert sp[1] == pytest.approx(0.0)
   assert sp[2] == pytest.approx(-pi/2)
