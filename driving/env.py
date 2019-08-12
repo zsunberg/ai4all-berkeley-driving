@@ -24,13 +24,33 @@ class QuadraticDistanceAngleReward:
   def reward_action(self, a_deg):
     return -self.action_penalty*a_deg**2
 
+class LinearDistanceAngleReward:
+  def __init__(self, map, distance_penalty=10.0, angle_penalty=0.05, action_penalty=0.1):
+    self.map = map
+    self.distance_penalty = distance_penalty
+    self.angle_penalty = angle_penalty
+    self.action_penalty = action_penalty
+
+  def reward(self, s, a):
+    d, delta_deg = self.map.distance_angle_deg(s[0], s[1], s[2])
+    rda = self.reward_distance_angle(d, delta_deg)
+    ra = self.reward_action(a)
+    return rda + ra
+
+  def reward_distance_angle(self, d, delta_deg):
+    return -self.distance_penalty*abs(d) - self.angle_penalty*abs(delta_deg)
+
+  def reward_action(self, a_deg):
+    return -self.action_penalty*abs(a_deg)
+
+
 class DrivingEnv:
   """State: [x, y, theta_deg]"""
   def __init__(self,
                map=make_oval(),
                car=DubinsCarModel(),
                dt=0.5,
-               reward=QuadraticDistanceAngleReward(make_oval()).reward,
+               reward=LinearDistanceAngleReward(make_oval()).reward,
                init_state=np.array((1.0, 0.5, 0.0))):
 
     self.map = map
