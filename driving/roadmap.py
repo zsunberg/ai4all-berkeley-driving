@@ -2,6 +2,8 @@ from math import pi, sin, cos, floor, ceil
 import numpy as np
 from random import random
 
+# all angles in this file are in RADIANS unless otherwise noted
+
 def angle_diff(a, b):
   """Calculate the difference in angles between -pi and pi"""
   delta = a-b

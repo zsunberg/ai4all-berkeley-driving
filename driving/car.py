@@ -1,6 +1,8 @@
 import numpy as np
 from math import pi, cos, sin
 
+# all angles in this file are in RADIANS unless otherwise noted
+
 class DubinsCarModel:
   """State: [x, y, theta_rad]"""
 
