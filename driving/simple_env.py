@@ -33,7 +33,7 @@ class SimpleDrivingEnv(gym.Env):
     theta_deg_p = theta_deg + a_deg*self.dt
     self.state = np.array((dp, theta_deg_p))
     if abs(dp) >= 10.0 or abs(theta_deg_p) >= 90.0:
-        r += 10.0
+        r -= 10.0
         done = True
     else:
         done = False
