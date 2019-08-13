@@ -122,7 +122,7 @@ class RoadMap:
     return x, y
 
   def sample(self):
-    return random()*self.tiles.shape[0], random()*self.tiles.shape[1]
+    return random()*self.tiles.shape[1], random()*self.tiles.shape[0]
 
   def plot(self, ax):
     ax.set_facecolor("lightgreen")
