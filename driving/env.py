@@ -25,16 +25,16 @@ class QuadraticDistanceAngleReward:
     return -self.action_penalty*a_deg**2
 
 class LinearDistanceAngleReward:
-  def __init__(self, map, distance_penalty=10.0, angle_penalty=0.05, action_penalty=0.1):
+  def __init__(self, map, distance_penalty=0.1, angle_penalty=0.0005, action_penalty=0.001):
     self.map = map
     self.distance_penalty = distance_penalty
     self.angle_penalty = angle_penalty
     self.action_penalty = action_penalty
 
-  def reward(self, s, a):
-    d, delta_deg = self.map.distance_angle_deg(s[0], s[1], s[2])
+  def reward(self, s_deg, a_deg):
+    d, delta_deg = self.map.distance_angle_deg(s_deg[0], s_deg[1], s_deg[2])
     rda = self.reward_distance_angle(d, delta_deg)
-    ra = self.reward_action(a)
+    ra = self.reward_action(a_deg)
     return rda + ra
 
   def reward_distance_angle(self, d, delta_deg):
