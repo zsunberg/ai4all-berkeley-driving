@@ -1,6 +1,7 @@
 from math import pi, sin, cos, floor, ceil
 import numpy as np
 from random import random
+from matplotlib.patches import Circle, Rectangle
 
 # all angles in this file are in RADIANS unless otherwise noted
 
@@ -31,6 +32,11 @@ class StraightTile(Tile):
   def angle(self):
     v = self.vec()
     return np.arctan2(v[1], v[0])
+
+  def plot(self, ax, xy):
+    p1 = self.start + xy
+    p2 = self.end + xy
+    ax.plot([p1[0],p2[0]], [p1[1],p2[1]], linewidth=30.0, color="gray")
 
 class CurveTile(Tile):
   def distance_angle(self, x, y, theta):
@@ -68,6 +74,15 @@ class CurveTile(Tile):
     assert cz != 0.0
     cz = 1.0 if cz > 0.0 else -1.0
     return np.array((center[0], center[1], cz))
+
+  def plot(self, ax, xy):
+    c = self.center2() + np.array(xy)
+    circ = Circle(c, 0.5, linewidth=30.0, fill=False, edgecolor="gray")
+    rect = Rectangle(xy, 1.0, 1.0, facecolor="none", edgecolor="none")
+    ax.add_artist(rect)
+    ax.add_artist(circ)
+    circ.set_clip_path(rect)
+
 
 class RoadMap:
   """Collection of tiles that makes a map. tiles argument is a 2d numpy array of tiles"""
@@ -108,6 +123,12 @@ class RoadMap:
 
   def sample(self):
     return random()*self.tiles.shape[0], random()*self.tiles.shape[1]
+
+  def plot(self, ax):
+    ax.set_facecolor("lightgreen")
+    for i in range(self.tiles.shape[0]):
+      for j in range(self.tiles.shape[1]):
+        self.tiles[i,j].plot(ax, (j, self.tiles.shape[0]-i-1))
 
 coords = {'left':(0.0, 0.5),
           'right':(1.0, 0.5),
