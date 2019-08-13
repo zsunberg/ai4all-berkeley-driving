@@ -1,3 +1,5 @@
+import gym
+from gym.spaces import Box, Discrete
 import numpy as np
 from driving.car import *
 from driving.roadmap import *
@@ -44,7 +46,7 @@ class LinearDistanceAngleReward:
     return -self.action_penalty*abs(a_deg)
 
 
-class DrivingEnv:
+class DrivingEnv(gym.Env):
   """State: [x, y, theta_deg]"""
   def __init__(self,
                map=make_oval(),
@@ -59,12 +61,21 @@ class DrivingEnv:
     self.reward = reward
     self.state = init_state
 
-  def step(self, a_deg):
+  def step(self, action_choice):
+    a_deg = [-30.0, -5.0, 0.0, 5.0, 30.0][action_choice]
     r = self.reward(self.state, a_deg)
     state_rad = self.state*(1.0, 1.0, pi/180)
     state_rad = self.car.dynamics(state_rad, a_deg*pi/180, self.dt)
     self.state = state_rad*(1.0, 1.0, 180/pi)
     return self.state, r, False, None
+
+  @property
+  def observation_space(self):
+    return Box(low=-np.infty, high=np.infty, shape=(3,))
+
+  @property
+  def action_space(self):
+    return Discrete(5)
 
   def reset(self):
     x, y = self.map.sample()
