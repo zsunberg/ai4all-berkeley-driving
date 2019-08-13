@@ -79,8 +79,7 @@ class DrivingEnv(gym.Env):
 
     d, ang = self.map.distance_angle_deg(self.state[0], self.state[1], self.state[2])
 
-    theta_deg_p = self.state[-1] + a_deg*self.dt
-    if abs(d) >= 10.0 or abs(theta_deg_p) >= 90.0:
+    if abs(d) >= 10.0:
       r -= 10
       done = True
     else:
@@ -93,6 +92,7 @@ class DrivingEnv(gym.Env):
     return self.state, r, done, dict()
 
   def reset(self):
+    self.t = 0
     x, y = self.map.sample()
     self.state = np.array((x, y, 360*random()))
     return self.state
