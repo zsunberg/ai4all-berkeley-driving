@@ -42,4 +42,5 @@ def plot_episode(env, policy, n_steps=100, ax=None):
     xs = [step[0][0] for step in history]
     ys = [step[0][1] for step in history]
     reward = sum([step[2] for step in history])
+    env.map.plot(ax)
     return ax.plot(xs, ys, color='red')
