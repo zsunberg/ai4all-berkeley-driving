@@ -2,6 +2,10 @@ import numpy as np
 from driving.car import *
 from driving.roadmap import *
 from random import random
+from matplotlib import pyplot as plt
+import gym
+from gym.spaces import Box, Discrete
+
 
 # all angles in this file are in DEGREES unless otherwise noted
 
@@ -44,29 +48,82 @@ class LinearDistanceAngleReward:
     return -self.action_penalty*abs(a_deg)
 
 
-class DrivingEnv:
+class DrivingEnv(gym.Env):
   """State: [x, y, theta_deg]"""
   def __init__(self,
                map=make_oval(),
                car=DubinsCarModel(),
                dt=0.5,
                reward=LinearDistanceAngleReward(make_oval()).reward,
-               init_state=np.array((1.0, 0.5, 0.0))):
+               init_state=np.array((1.0, 0.5, 0.0)),
+               actions=(-35.0, -10.0, 0.0, 10.0, 35.0)):
 
     self.map = map
     self.car = car
     self.dt = dt
     self.reward = reward
     self.state = init_state
+    self.actions = actions
+    self.t = 0
 
-  def step(self, a_deg):
+  def step(self,action_choice):
+    a_deg = self.actions[action_choice]
+    return self.step_a_deg(a_deg)
+
+  def step_a_deg(self, a_deg):
     r = self.reward(self.state, a_deg)
+    old_state = self.state
     state_rad = self.state*(1.0, 1.0, pi/180)
     state_rad = self.car.dynamics(state_rad, a_deg*pi/180, self.dt)
     self.state = state_rad*(1.0, 1.0, 180/pi)
-    return self.state, r, False, None
+
+    d, ang = self.map.distance_angle_deg(self.state[0], self.state[1], self.state[2])
+
+    theta_deg_p = self.state[-1] + a_deg*self.dt
+    if abs(d) >= 10.0 or abs(theta_deg_p) >= 90.0:
+      r -= 10
+      done = True
+    else:
+      done=False
+
+    self.t += 1
+    if self.t > 100:
+      done = True
+
+    return self.state, r, done, dict()
 
   def reset(self):
     x, y = self.map.sample()
     self.state = np.array((x, y, 360*random()))
     return self.state
+
+  @property
+  def observation_space(self):
+    return Box(low=-90.0, high=90.0, shape=(3,))
+
+  
+  @property
+  def action_space(self):
+    return Discrete(5)
+
+def sim(env, policy, n_steps=100):
+  s = env.reset()
+  history = []
+  for i in range(n_steps):
+      a = policy(s)
+      sp, r, done, info = env.step_a_deg(a)
+      history.append((s, a, r, sp))
+      s = sp
+      if done:
+          break
+  return history
+
+def plot_sim(env, policy, n_steps=100):
+    history = sim(env, policy, n_steps)
+    # xs = range(len(history))
+    xs = [step[0][0] for step in history]
+    ys = [step[0][1] for step in history]
+    reward = sum([step[2] for step in history])
+    print(f'reward: {reward}')
+    plt.plot(xs, ys)
+    return history
