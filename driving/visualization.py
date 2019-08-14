@@ -4,12 +4,18 @@ import numpy as np
 from IPython.display import HTML
 from celluloid import Camera
 
-def animate(env, policy, time=20.0, dt=0.1):
+def record(env, policy, time=20.0, dt=0.1, initial_state=None, fix_limits=True):
     fig = plt.figure(figsize=(11,8))
     ax = fig.gca()
     ax.set_aspect(1)
+    if fix_limits:
+        ax.set_xlim(-0.0, 3.0)
+        ax.set_ylim(-0.0, 2.0)
     cam = Camera(fig)
     s = env.reset()
+    if initial_state is not None:
+        s = initial_state
+        env.state = initial_state
     n_steps = round(time/dt)
     for i in range(n_steps):
         # print(f'step {i} of {n_steps}', end='\r')
@@ -19,7 +25,10 @@ def animate(env, policy, time=20.0, dt=0.1):
         cam.snap()
         a = policy(*s)
         s, r, done, info = env.step_a_deg(a)
-    # return cam.animate()
+    return cam
+
+def animate(env, policy, dt=0.1, **kwargs):
+    cam = record(env, policy, dt=dt, **kwargs)
     anim = cam.animate(interval=dt*1000)
     return HTML(anim.to_html5_video())
 
