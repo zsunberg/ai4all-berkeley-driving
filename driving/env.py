@@ -29,7 +29,7 @@ class QuadraticDistanceAngleReward:
     return -self.action_penalty*a_deg**2
 
 class LinearDistanceAngleReward:
-  def __init__(self, map, distance_penalty=0.1, angle_penalty=0.0005, action_penalty=0.001):
+  def __init__(self, map, distance_penalty=0.5, angle_penalty=0.0005, action_penalty=0.001):
     self.map = map
     self.distance_penalty = distance_penalty
     self.angle_penalty = angle_penalty
@@ -79,9 +79,11 @@ class DrivingEnv(gym.Env):
 
     d, ang = self.map.distance_angle_deg(self.state[0], self.state[1], self.state[2])
 
-    # if abs(d) >- 10.0
-    if abs(d) >= 1.0:
-      r -= 10
+    # Set the Reward to 0 if it's within 2 of the road
+    if abs(d) <= 0.1:
+      r = 0
+    if abs(d) >= 2.0:
+      r -= 50
       done = True
     else:
       done=False
