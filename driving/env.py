@@ -71,7 +71,7 @@ class DrivingEnv(gym.Env):
     return self.step_a_deg(a_deg)
 
   def step_a_deg(self, a_deg):
-    r = self.reward(self.state, a_deg)
+    r = self.reward(self.state, a_deg) # CHANGE TO X,Y,THETA
     old_state = self.state
     state_rad = self.state*(1.0, 1.0, pi/180)
     state_rad = self.car.dynamics(state_rad, a_deg*pi/180, self.dt)
@@ -108,7 +108,7 @@ class DrivingEnv(gym.Env):
   
   @property
   def action_space(self):
-    return Discrete(5)
+    return Discrete(len(self.actions)) # Change for the Number of the Actions
 
 def sim(env, policy, n_steps=100):
   s = env.reset()
