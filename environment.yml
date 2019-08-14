@@ -1,0 +1,9 @@
+name: ai4all
+
+dependencies:
+    - python==3.7
+    - pip:
+        - tensorflow
+        - numpy
+        - celluloid
+        - jupyter
