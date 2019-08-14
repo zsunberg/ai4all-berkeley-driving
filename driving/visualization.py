@@ -21,7 +21,7 @@ def animate(env, policy, time=20.0, dt=0.1):
         s, r, done, info = env.step_a_deg(a)
     # return cam.animate()
     anim = cam.animate(interval=dt*1000)
-    return HTML(anim.to_html5_video())
+    return HTML(anim.to_jshtml())
 
 def sim(env, policy, n_steps=99):
     s = env.reset()

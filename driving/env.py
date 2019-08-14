@@ -80,8 +80,8 @@ class DrivingEnv(gym.Env):
     d, ang = self.map.distance_angle_deg(self.state[0], self.state[1], self.state[2])
 
     # if abs(d) >- 10.0
-    if abs(d) >= 1.0:
-      r -= 10
+    if abs(d) >= 2.0:
+      r -= 200
       done = True
     else:
       done=False
