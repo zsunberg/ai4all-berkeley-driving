@@ -10,24 +10,6 @@ from stable_baselines import DQN
 import sys
 import matplotlib.pyplot as plt
 
-def run(policy, env=DrivingEnv()):
-  """Display a real-time animation of the car moving around."""
-  pass
-
-def sim(policy, env=DrivingEnv()):
-  """Return a SimResult"""
-  pass
-  
-def sim_many(policy, env=DrivingEnv(), episode_length=1000, n_episodes=1000):
-  """Return a list of SimResults"""
-  pass
-
-# train
-
-class StudentEnv():
-	def __init__(self):
-		pass
-
 
 def env_constructor():
     return DrivingEnv()
