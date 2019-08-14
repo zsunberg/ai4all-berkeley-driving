@@ -9,25 +9,6 @@ from gym.spaces import Box, Discrete
 
 # all angles in this file are in DEGREES unless otherwise noted
 
-class QuadraticDistanceAngleReward:
-  def __init__(self, map, distance_penalty=1.0, angle_penalty=0.0001, action_penalty=0.0001):
-    self.map = map
-    self.distance_penalty = distance_penalty
-    self.angle_penalty = angle_penalty
-    self.action_penalty = action_penalty
-
-  def reward(self, s, a):
-    d, delta_deg = self.map.distance_angle_deg(s[0], s[1], s[2])
-    rda = self.reward_distance_angle(d, delta_deg)
-    ra = self.reward_action(a)
-    return rda + ra
-
-  def reward_distance_angle(self, d, delta_deg):
-    return -self.distance_penalty*d**2 - self.angle_penalty*delta_deg**2
-
-  def reward_action(self, a_deg):
-    return -self.action_penalty*a_deg**2
-
 class LinearDistanceAngleReward:
   def __init__(self, map, distance_penalty=0.3, angle_penalty=0.0005, action_penalty=0.001):
     self.map = map
