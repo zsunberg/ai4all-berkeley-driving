@@ -20,7 +20,16 @@ class LinearDistanceAngleReward:
     d, delta_deg = self.map.distance_angle_deg(x,y,theta)
     rda = self.reward_distance_angle(d, delta_deg)
     ra = self.reward_action(a_deg)
-    return rda + ra
+
+    r = rda + ra
+
+    # Set the Reward to 0 if it's within 0.1 of the road
+    if abs(d) <= 0.1:
+      r = 1
+
+    if abs(d) >= 2.0:
+      r -= 20
+    return r
 
   def reward_distance_angle(self, d, delta_deg):
     return -self.distance_penalty*abs(d) - self.angle_penalty*abs(delta_deg)
@@ -53,20 +62,14 @@ class DrivingEnv(gym.Env):
 
   def step_a_deg(self, a_deg):
     s = self.state
-    r = self.reward(s[0], s[1], s[2], a_deg) # CHANGE TO X,Y,THETA
+    r = self.reward(s[0], s[1], s[2], a_deg) 
     old_state = self.state
     state_rad = self.state*(1.0, 1.0, pi/180)
     state_rad = self.car.dynamics(state_rad, a_deg*pi/180, self.dt)
     self.state = state_rad*(1.0, 1.0, 180/pi)
 
     d, ang = self.map.distance_angle_deg(self.state[0], self.state[1], self.state[2])
-
-    # Set the Reward to 0 if it's within 0.1 of the road
-    if abs(d) <= 0.1:
-      r = 1
-
     if abs(d) >= 2.0:
-      r -= 20
       done = True
     else:
       done=False
@@ -108,12 +111,12 @@ def sim(env, policy, n_steps=100):
           break
   return history
 
-def plot_sim(env, policy, n_steps=100):
-    history = sim(env, policy, n_steps)
-    # xs = range(len(history))
-    xs = [step[0][0] for step in history]
-    ys = [step[0][1] for step in history]
-    reward = sum([step[2] for step in history])
-    print(f'reward: {reward}')
-    plt.plot(xs, ys)
-    return history
+# def plot_sim(env, policy, n_steps=100):
+#     history = sim(env, policy, n_steps)
+#     # xs = range(len(history))
+#     xs = [step[0][0] for step in history]
+#     ys = [step[0][1] for step in history]
+#     reward = sum([step[2] for step in history])
+#     print(f'reward: {reward}')
+#     plt.plot(xs, ys)
+#     return history
