@@ -47,7 +47,7 @@ def sim(env, policy, n_steps=99):
 def plot_episode(env, policy, n_steps=100, ax=None):
     if ax == None:
         ax = plt.gca()
-        plt.figure(figsize(11,8))
+        plt.figure(figsize=(11,8))
     history = sim(env, policy, n_steps)
     xs = [step[0][0] for step in history]
     ys = [step[0][1] for step in history]

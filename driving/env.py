@@ -35,8 +35,8 @@ class LinearDistanceAngleReward:
     self.angle_penalty = angle_penalty
     self.action_penalty = action_penalty
 
-  def reward(self, s_deg, a_deg):
-    d, delta_deg = self.map.distance_angle_deg(s_deg[0], s_deg[1], s_deg[2])
+  def reward(self, x,y,theta, a_deg):
+    d, delta_deg = self.map.distance_angle_deg(x,y,theta)
     rda = self.reward_distance_angle(d, delta_deg)
     ra = self.reward_action(a_deg)
     return rda + ra
@@ -71,7 +71,8 @@ class DrivingEnv(gym.Env):
     return self.step_a_deg(a_deg)
 
   def step_a_deg(self, a_deg):
-    r = self.reward(self.state, a_deg) # CHANGE TO X,Y,THETA
+    s = self.state
+    r = self.reward(s[0], s[1], s[2], a_deg) # CHANGE TO X,Y,THETA
     old_state = self.state
     state_rad = self.state*(1.0, 1.0, pi/180)
     state_rad = self.car.dynamics(state_rad, a_deg*pi/180, self.dt)
@@ -109,6 +110,10 @@ class DrivingEnv(gym.Env):
   @property
   def action_space(self):
     return Discrete(len(self.actions)) # Change for the Number of the Actions
+
+  # Helper function to get the distance and angle, to help writing reward functions
+  def getDistanceAngle(self):
+    return self.map.distance_angle_deg(self.state[0], self.state[1], self.state[2])
 
 def sim(env, policy, n_steps=100):
   s = env.reset()
