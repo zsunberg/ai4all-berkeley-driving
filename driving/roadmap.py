@@ -5,6 +5,8 @@ from matplotlib.patches import Circle, Rectangle
 
 # all angles in this file are in RADIANS unless otherwise noted
 
+LINEWIDTH = 50.0
+
 def angle_diff(a, b):
   """Calculate the difference in angles between -pi and pi"""
   delta = a-b
@@ -36,7 +38,7 @@ class StraightTile(Tile):
   def plot(self, ax, xy):
     p1 = self.start + xy
     p2 = self.end + xy
-    ax.plot([p1[0],p2[0]], [p1[1],p2[1]], linewidth=30.0, color="gray")
+    ax.plot([p1[0],p2[0]], [p1[1],p2[1]], linewidth=LINEWIDTH, color="gray")
 
 class CurveTile(Tile):
   def distance_angle(self, x, y, theta):
@@ -77,7 +79,7 @@ class CurveTile(Tile):
 
   def plot(self, ax, xy):
     c = self.center2() + np.array(xy)
-    circ = Circle(c, 0.5, linewidth=30.0, fill=False, edgecolor="gray")
+    circ = Circle(c, 0.5, linewidth=LINEWIDTH, fill=False, edgecolor="gray")
     rect = Rectangle(xy, 1.0, 1.0, facecolor="none", edgecolor="none")
     ax.add_artist(rect)
     ax.add_artist(circ)
