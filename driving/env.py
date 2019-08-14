@@ -79,11 +79,12 @@ class DrivingEnv(gym.Env):
 
     d, ang = self.map.distance_angle_deg(self.state[0], self.state[1], self.state[2])
 
-    # Set the Reward to 0 if it's within 2 of the road
+    # Set the Reward to 0 if it's within 0.1 of the road
     if abs(d) <= 0.1:
       r = 0
+
     if abs(d) >= 2.0:
-      r -= 50
+      r -= 200
       done = True
     else:
       done=False
