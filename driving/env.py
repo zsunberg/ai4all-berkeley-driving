@@ -38,13 +38,37 @@ class LinearDistanceAngleReward:
     return -self.action_penalty*abs(a_deg)
 
 
+class BadReward:
+  def __init__(self, map, distance_penalty=0.3, angle_penalty=0.0005, action_penalty=0.001):
+    self.map = map
+    self.distance_penalty = distance_penalty
+    self.angle_penalty = angle_penalty
+    self.action_penalty = action_penalty
+
+  def reward(self, x,y,theta, a_deg):
+    d, delta_deg = self.map.distance_angle_deg(x,y,theta)
+    rda = self.reward_distance_angle(d, delta_deg)
+    ra = self.reward_action(a_deg)
+
+    r = rda + ra
+
+    if abs(d) >= 2.0:
+      r -= 20
+    return r
+
+  def reward_distance_angle(self, d, delta_deg):
+    return -self.distance_penalty*abs(d) - self.angle_penalty*abs(delta_deg)
+
+  def reward_action(self, a_deg):
+    return -self.action_penalty*abs(a_deg)
+
 class DrivingEnv(gym.Env):
   """State: [x, y, theta_deg]"""
   def __init__(self,
                map=make_oval(),
                car=DubinsCarModel(),
                dt=0.5,
-               reward=LinearDistanceAngleReward(make_oval()).reward,
+               reward=BadReward(make_oval()).reward,
                init_state=np.array((1.0, 0.5, 0.0)),
                actions=(-35.0, -20.0, -10.0, -5.0, 0.0, 5.0, 10.0, 20.0, 35.0)):
 
