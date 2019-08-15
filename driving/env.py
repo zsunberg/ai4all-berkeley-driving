@@ -120,8 +120,8 @@ class DrivingEnv(gym.Env):
     return Discrete(len(self.actions)) # Change for the Number of the Actions
 
   # Helper function to get the distance and angle, to help writing reward functions
-  def getDistanceAngle(self):
-    return self.map.distance_angle_deg(self.state[0], self.state[1], self.state[2])
+  def getDistanceAngle(self, x, y, theta):
+    return self.map.distance_angle_deg(x, y, theta)
 
 def sim(env, policy, n_steps=100):
   s = env.reset()
