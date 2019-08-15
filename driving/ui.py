@@ -64,3 +64,9 @@ class StudentQModel():
 	def basicPolicy(self, x,y,theta):
 	    best_a = self.model.predict([x,y,theta])[0]
 	    return self.env.actions[best_a]
+
+def view_reward(env):
+    view_sa_func(env.reward, env)
+
+def view_q_value(model):
+    view_sa_func(model.q_value, model.env)
