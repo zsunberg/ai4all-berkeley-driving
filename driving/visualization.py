@@ -48,10 +48,14 @@ def sim(env, policy, n_steps=99):
             break
     return history
 
-def plot_episode(env, policy, n_steps=100, ax=None):
+def plot_episode(env, policy, n_steps=100, ax=None, fix_limits=True):
     if ax == None:
-        ax = plt.gca()
-        plt.figure(figsize=(11,8))
+        fig = plt.figure(figsize=(11,8))
+        ax = fig.gca()
+        ax.set_aspect(1)
+    if fix_limits:
+        ax.set_xlim(-0.0, 3.0)
+        ax.set_ylim(-0.0, 2.0)
     history = sim(env, policy, n_steps)
     xs = [step[0][0] for step in history]
     ys = [step[0][1] for step in history]
