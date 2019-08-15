@@ -25,7 +25,7 @@ class LinearDistanceAngleReward:
 
     # Set the Reward to 0 if it's within 0.1 of the road
     if abs(d) <= 0.1:
-      r = 1
+      r = 1 + ra
 
     if abs(d) >= 2.0:
       r -= 20
