@@ -29,11 +29,11 @@ class StudentQModel():
 		self.actions = actions
 		self.cur_acts = dict() # This is the dict of Action: Q-Value
 
-	def train(self, n_steps=10000, model_name="neural_net"):
+	def train(self, n_steps=20000, breaks=20000, model_name="neural_net"):
 		# Print/Save after every 10,000 Steps
-		div = n_steps//10000
-		run_nums = [10000] * div
-		final_run = n_steps - div*10000
+		div = n_steps//breaks
+		run_nums = [breaks] * div
+		final_run = n_steps - div*breaks
 
 		# Run Training for the Students
 		for steps in run_nums:
