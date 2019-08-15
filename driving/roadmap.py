@@ -151,3 +151,28 @@ def make_oval():
   bl = CurveTile(b, l)
   return RoadMap(np.array(((rb, rl, bl),
                            (tr, lr, lt))))
+
+def make_maze():
+  l = coords['left']
+  r = coords['right']
+  t = coords['top']
+  b = coords['bottom']
+
+  rl = StraightTile(r, l)
+  rb = CurveTile(r, b)
+  tr = CurveTile(t, r)
+  lr = StraightTile(l, r)
+  lt = CurveTile(l, t)
+  bl = CurveTile(b, l)
+  tb = StraightTile(t, b)
+  br = CurveTile(b, r)
+  lb = CurveTile(l, b)
+  rt = CurveTile(r, t)
+  tl = CurveTile(t, l)
+  bt = StraightTile(b, t)
+  return RoadMap(np.array([[rb, rl, rl, bl, rb, bl],
+                           [tb, br, lb, rt, tl, bt],
+                           [tb, bt, tr, lr, lr, lt],
+                           [tb, rt, rl, rl, rl, bl],
+                           [tb, br, lb, br, lb, bt],
+                           [tr, lt, tr, lt, tr, lt]]))
