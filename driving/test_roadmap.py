@@ -74,6 +74,9 @@ def test_global_distance_angle():
   assert d == pytest.approx(0.2)
   assert ar == pytest.approx(0.1)
 
+def test_maze():
+  maze = make_maze()
+
 # if __name__ == "__main__":
 #   test_straight_horiz()
 #   test_straight_down()
