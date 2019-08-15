@@ -66,7 +66,7 @@ class StudentQModel():
 	    return self.env.actions[best_a]
 
 def view_reward(env):
-    view_sa_func(env.reward, env)
+    return view_sa_func(env.reward, env)
 
 def view_q_value(model):
-    view_sa_func(model.q_value, model.env)
+    return view_sa_func(model.q_value, model.env)

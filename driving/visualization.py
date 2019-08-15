@@ -82,6 +82,7 @@ def view_sa_func(f, env=DrivingEnv()):
     ui = widgets.HBox([widgets.VBox([x_slider, y_slider]),
                        widgets.VBox([theta_slider, a_slider])])
 
+    capture = []
     def show_function(f, x, y, theta, a):
         xmax = env.map.tiles.shape[1]
         ymax = env.map.tiles.shape[0]
@@ -116,15 +117,18 @@ def view_sa_func(f, env=DrivingEnv()):
                                 cmap=plt.get_cmap('RdYlGn')
                                )
         
-        
+        capture.append(mappable)
         fig.colorbar(mappable)
         
         ax2 = plt.subplot(gs[1])
         vals = [f(x, y, theta, aa) for aa in env.actions]
+        cmap = mappable.get_cmap()
+        norm = mappable.norm
+        colors = [cmap(norm(v)) for v in vals]
         
         ax2.bar(range(len(env.actions)),
                 vals,
-                # color = 
+                color = colors,
                 tick_label=env.actions,
                )
         
@@ -137,3 +141,4 @@ def view_sa_func(f, env=DrivingEnv()):
                                       'a':a_slider
                                      })
     display(ui, out)
+    return capture[0]
