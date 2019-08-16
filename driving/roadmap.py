@@ -35,10 +35,10 @@ class StraightTile(Tile):
     v = self.vec()
     return np.arctan2(v[1], v[0])
 
-  def plot(self, ax, xy):
+  def plot(self, ax, xy, linewidth=LINEWIDTH):
     p1 = self.start + xy
     p2 = self.end + xy
-    ax.plot([p1[0],p2[0]], [p1[1],p2[1]], linewidth=LINEWIDTH, color="gray")
+    ax.plot([p1[0],p2[0]], [p1[1],p2[1]], linewidth=linewidth, color="gray")
 
 class CurveTile(Tile):
   def distance_angle(self, x, y, theta):
@@ -77,9 +77,9 @@ class CurveTile(Tile):
     cz = 1.0 if cz > 0.0 else -1.0
     return np.array((center[0], center[1], cz))
 
-  def plot(self, ax, xy):
+  def plot(self, ax, xy, linewidth=LINEWIDTH):
     c = self.center2() + np.array(xy)
-    circ = Circle(c, 0.5, linewidth=LINEWIDTH, fill=False, edgecolor="gray")
+    circ = Circle(c, 0.5, linewidth=linewidth, fill=False, edgecolor="gray")
     rect = Rectangle(xy, 1.0, 1.0, facecolor="none", edgecolor="none")
     ax.add_artist(rect)
     ax.add_artist(circ)
@@ -126,11 +126,11 @@ class RoadMap:
   def sample(self):
     return random()*self.tiles.shape[1], random()*self.tiles.shape[0]
 
-  def plot(self, ax):
+  def plot(self, ax, **kwargs):
     ax.set_facecolor("lightgreen")
     for i in range(self.tiles.shape[0]):
       for j in range(self.tiles.shape[1]):
-        self.tiles[i,j].plot(ax, (j, self.tiles.shape[0]-i-1))
+        self.tiles[i,j].plot(ax, (j, self.tiles.shape[0]-i-1), **kwargs)
 
 coords = {'left':(0.0, 0.5),
           'right':(1.0, 0.5),

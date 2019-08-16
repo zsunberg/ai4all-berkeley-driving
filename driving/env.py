@@ -123,6 +123,9 @@ class DrivingEnv(gym.Env):
   def getDistanceAngle(self, x, y, theta):
     return self.map.distance_angle_deg(x, y, theta)
 
+  def distance_angle(self, x, y, theta):
+    return self.map.distance_angle_deg(x, y, theta)
+
 def sim(env, policy, n_steps=100):
   s = env.reset()
   history = []
