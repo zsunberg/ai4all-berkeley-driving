@@ -29,28 +29,34 @@ class StudentQModel():
 		self.actions = actions
 		self.cur_acts = dict() # This is the dict of Action: Q-Value
 
-	def train(self, n_steps=20000, breaks=20000, model_name="neural_net"):
+	def train(self, n_steps=20000, breaks=10000, model_name="neural_net"):
 		# Print/Save after every 10,000 Steps
 		div = n_steps//breaks
 		run_nums = [breaks] * div
 		final_run = n_steps - div*breaks
 
+		# To Avoid Scope issues in callback, making them self. variables
+		self.n = 0
+		self.breaks = breaks
+		self.model_name = model_name
+
 		# Run Training for the Students
-		for steps in run_nums:
-			self.train_helper(steps, model_name)
-
-		if final_run > 0:
-			self.train_helper(final_run, model_name)
-
-	def train_helper(self, n_steps, model_name):
-		self.n += n_steps
-		self.model.learn(total_timesteps=n_steps)
-		self.model.save(model_name + "_" + str(self.n)) # Save After training for steps
+		self.model.learn(total_timesteps=n_steps, callback=self.train_callback)
 		
-
 		print("Finished " + model_name + "_" + str(self.n))
 		plot = plot_episode_training(self.env, self.basicPolicy) # To make sure that the plot prints
 		plt.show()
+
+	# Callback called during training
+	def train_callback(self, _locals, _globals):
+		self.n += 1
+		if self.n % self.breaks == 0:
+
+			print("Finished " + self.model_name + "_" + str(self.n))
+			plot = plot_episode_training(self.env, self.basicPolicy) # To make sure that the plot prints
+			plt.show()
+
+			self.model.save(self.model_name + "_" + str(self.n))
 
 	def q_value(self, x,y,theta, a):
 		q_values = self.model.step_model.step([[x,y,theta],])[1][0]
